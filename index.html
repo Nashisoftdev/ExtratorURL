@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Extrator de URL .m3u8</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #121212;
+      color: #fff;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    input, button, textarea {
+      padding: 10px;
+      margin: 10px;
+      width: 90%;
+      max-width: 600px;
+      font-size: 1rem;
+    }
+
+    input {
+      border: 1px solid #555;
+      background: #1e1e1e;
+      color: #fff;
+    }
+
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      background-color: #555;
+    }
+
+    textarea {
+      background: #1e1e1e;
+      color: #0f0;
+      height: 100px;
+    }
+
+    .links {
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      background-color: #fff;
+      color: #1e1e1e;
+      padding: 6px;
+      width: 300px;
+    }
+	
+  </style>
+</head>
+<body>
+  <h1>🔍 Extrator de URL .m3u8</h1>
+  <p>Cole a URL da WebTV abaixo para tentar extrair o endereço da transmissão IPTV (.m3u8)</p>
+
+  <input id="urlInput" placeholder="Cole a URL da WebTV aqui" />
+  <br>
+  <button onclick="buscarM3U8()">Buscar .m3u8</button>
+  <br>
+  <textarea id="result" readonly placeholder="Endereço .m3u8 aparecerá aqui"></textarea>
+  <br>
+  <button onclick="copiarTexto()" id="copyBtn" disabled>📋 Copiar Link</button>
+
+  <script>
+    async function buscarM3U8() {
+      const url = document.getElementById('urlInput').value.trim();
+      const result = document.getElementById('result');
+      const copyBtn = document.getElementById('copyBtn');
+      result.value = "Buscando...";
+      copyBtn.disabled = true;
+
+      try {
+        const res = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`);
+        const text = await res.text();
+
+        const match = text.match(/(https?:\/\/.*?\.m3u8[^"']*)/i);
+        if (match && match[1]) {
+          result.value = match[1];
+          copyBtn.disabled = false;
+        } else {
+          result.value = "Nenhum link .m3u8 encontrado.";
+        }
+      } catch (e) {
+        result.value = "Erro ao buscar a página ou CORS bloqueado.";
+      }
+    }
+
+    function copiarTexto() {
+      const result = document.getElementById('result');
+      result.select();
+      document.execCommand("copy");
+      alert("Link copiado!");
+    }
+  </script>
+
+  <div class="links">
+  <h3>LISTAS DE CANAIS:</h3>
+  <p><a href="https://www.cxtv.com.br" target="_blank">CXTV</a></p>
+  <p><a href="https://clubecanais.com.br" target="_blank">Clube Canais</a></p>	
+  <p><a href="https://www.olhosnatv.com.br" target="_blank">Olhos Na TV</a></p>
+  <p><a href="https://iptv-web.app" target="_blank">IPTV Web App</a></p>
+  <p><a href="https://xtrematv.com" target="_blank">Xtrematv</a></p>
+  </div>
+</body>
+</html>
